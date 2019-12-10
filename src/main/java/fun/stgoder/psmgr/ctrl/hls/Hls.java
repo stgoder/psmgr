@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,14 +17,21 @@ import java.io.*;
 @RequestMapping("/hls")
 public class Hls {
     @CrossOrigin("*")
-    @GetMapping("/record/{key}/out.m3u8")
-    public void m3u8(@PathVariable("key") String key,
+    @GetMapping("/{type}/{key}/out.m3u8")
+    public void m3u8(@PathVariable("type") String type,
+                     @PathVariable("key") String key,
                      HttpServletRequest request,
                      HttpServletResponse response) throws IOException {
-        File recordM3u8 = new File(Constants.RECORD_PATH + File.separator + key + File.separator + "out.m3u8");
-        if (!recordM3u8.exists())
+        String m3u8Path;
+        if (StringUtils.equals(type, "record")) {
+            m3u8Path = Constants.RECORD_PATH + File.separator + key + File.separator + "out.m3u8";
+        } else {
+            m3u8Path = Constants.HLS_PATH + File.separator + key + File.separator + "out.m3u8";
+        }
+        File m3u8File = new File(m3u8Path);
+        if (!m3u8File.exists())
             return;
-        try (final BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(recordM3u8));
+        try (final BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(m3u8File));
              OutputStream outputStream = response.getOutputStream()) {
             final byte[] buffer = new byte[1024 * 512];
             int len = 0;
@@ -34,12 +42,19 @@ public class Hls {
     }
 
     @CrossOrigin("*")
-    @GetMapping("/record/{key}/{filename}")
-    public void ts(@PathVariable("key") String key,
+    @GetMapping("/{type}/{key}/{filename}")
+    public void ts(@PathVariable("type") String type,
+                   @PathVariable("key") String key,
                    @PathVariable("filename") String filename,
                    HttpServletRequest request,
                    HttpServletResponse response) throws IOException {
-        File tsFile = new File(Constants.RECORD_PATH + File.separator + key + File.separator + filename);
+        String tsPath;
+        if (StringUtils.equals(type, "record")) {
+            tsPath = Constants.RECORD_PATH + File.separator + key + File.separator + filename;
+        } else {
+            tsPath = Constants.HLS_PATH + File.separator + key + File.separator + filename;
+        }
+        File tsFile = new File(tsPath);
         if (!tsFile.exists())
             return;
         try (final BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(tsFile));
@@ -53,11 +68,21 @@ public class Hls {
     }
 
     @GetMapping("/play-record/{key}")
-    public ModelAndView play(@PathVariable("key") String key, ModelAndView mv) throws Exception {
+    public ModelAndView playRecord(@PathVariable("key") String key, ModelAndView mv) throws Exception {
         mv.setViewName("play-hls");
         String url = "http://" + Constants.localIpv4 + ":" +
                 Constants.SERVER_PORT + Constants.SERVER_SERVLET_CONTEXT_PATH +
                 "/hls/record/" + key + "/out.m3u8";
+        mv.addObject("url", url);
+        return mv;
+    }
+
+    @GetMapping("/play-live/{key}")
+    public ModelAndView playLive(@PathVariable("key") String key, ModelAndView mv) throws Exception {
+        mv.setViewName("play-hls");
+        String url = "http://" + Constants.localIpv4 + ":" +
+                Constants.SERVER_PORT + Constants.SERVER_SERVLET_CONTEXT_PATH +
+                "/hls/live/" + key + "/out.m3u8";
         mv.addObject("url", url);
         return mv;
     }

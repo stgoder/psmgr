@@ -3,6 +3,7 @@
 <div th:fragment="nav">
     <a th:href="@{/}" th:class="${tab} == 'index' ? 'tab-active' : 'tab'">index</a>
     <a th:href="@{/pusher/}" th:class="${tab} == 'pusher' ? 'tab-active' : 'tab'">pusher</a>
+    <a th:href="@{/live-hls/}" th:class="${tab} == 'live-hls' ? 'tab-active' : 'tab'">live-hls</a>
     <a th:href="@{/recorder/}" th:class="${tab} == 'recorder' ? 'tab-active' : 'tab'">recorder</a>
     <a th:href="@{/record-files/}" th:class="${tab} == 'record-files' ? 'tab-active' : 'tab'">record-files</a>
 </div>

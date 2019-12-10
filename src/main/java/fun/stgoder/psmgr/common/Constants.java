@@ -15,6 +15,7 @@ public class Constants {
     public static final String PSLOG_PATH;
     public static final String RECORD_PATH;
     public static final int HLS_TIME;
+    public static final String HLS_PATH;
 
     static {
         Yaml yaml = new Yaml();
@@ -37,6 +38,10 @@ public class Constants {
         if (!recordDir.exists())
             recordDir.mkdirs();
         HLS_TIME = (int) myConfig.getOrDefault("hls-time", 10);
+        HLS_PATH = (String) myConfig.getOrDefault("hls-path", "/home/stgoder/psmgr/hls");
+        File hlsDir = new File(HLS_PATH);
+        if (!hlsDir.exists())
+            hlsDir.mkdirs();
     }
 
     private Constants() {
