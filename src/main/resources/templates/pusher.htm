@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="common/head::head"></head>
+<body>
+<div th:include="common/nav::nav" class="tabs"></div>
+<div class="content">
+    <form th:action="@{/pusher/startAndPut}" method="post">
+        <table>
+            <tr>
+                <td>
+                    <input type="text" name="key" required="required" placeholder="key">
+                </td>
+                <td>key</td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" name="rtspUrl" required="required" placeholder="rtspUrl">
+                </td>
+                <td>rtsp://192.168.1.136/81</td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" name="rtmpUrl" required="required" placeholder="rtmpUrl">
+                </td>
+                <td>rtmp://192.168.1.214/live/81</td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="keepAlive">
+                        <option value="true" selected>true</option>
+                        <option value="false">false</option>
+                    </select>
+                </td>
+                <td>boolean keep alive</td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" name="cancelAfterSeconds" placeholder="cancelAfterSeconds">
+                </td>
+                <td>cancel after ? seconds</td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="submit">start</button>
+                </td>
+                <td>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div class="content">
+    <table>
+        <tr>
+            <th>key</th>
+            <th>rtspUrl</th>
+            <th>rtmpUrl</th>
+            <th>keepAlive</th>
+            <th>cancelAfterSeconds</th>
+            <th>birthTime</th>
+            <th>upTime</th>
+            <th>stopAndRemove</th>
+        </tr>
+        <tr th:each="pusher : ${pushers}">
+            <td><a th:href="@{/pusher/play-http-flv/} + ${pusher.key}" th:text="${pusher.key}" target="_blank"></a></td>
+            <td th:text="${pusher.rtspUrl}"></td>
+            <td th:text="${pusher.rtmpUrl}"></td>
+            <td th:text="${pusher.keepAlive}"></td>
+            <td th:text="${pusher.cancelAfterSeconds}"></td>
+            <td th:text="${#dates.format(pusher.birthTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td th:text="${#dates.format(pusher.upTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td>
+                <form th:action="@{/pusher/stopAndRemove}" method="post">
+                    <input type="hidden" name="key" th:value="${pusher.key}">
+                    <button type="submit">X</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="common/head::head"></head>
+<body>
+<div th:include="common/nav::nav" class="tabs"></div>
+<div class="content">
+    <form th:action="@{/recorder/startAndPut}" method="post">
+        <table>
+            <tr>
+                <td>
+                    <input type="text" name="key" required="required" placeholder="key">
+                </td>
+                <td>key</td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" name="url" required="required" placeholder="url">
+                </td>
+                <td>rtsp://192.168.1.136/81</td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="keepAlive">
+                        <option value="true" selected>true</option>
+                        <option value="false">false</option>
+                    </select>
+                </td>
+                <td>boolean keep alive</td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" name="cancelAfterSeconds" placeholder="cancelAfterSeconds">
+                </td>
+                <td>cancel after ? seconds</td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="submit">start</button>
+                </td>
+                <td>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div class="content">
+    <table>
+        <tr>
+            <th>key</th>
+            <th>url</th>
+            <th>keepAlive</th>
+            <th>cancelAfterSeconds</th>
+            <th>birthTime</th>
+            <th>upTime</th>
+            <th>stopAndRemove</th>
+        </tr>
+        <tr th:each="recorder : ${recorders}">
+            <td><a th:href="@{/hls/play-record/} + ${recorder.key}" th:text="${recorder.key}" target="_blank"></a></td>
+            <td th:text="${recorder.url}"></td>
+            <td th:text="${recorder.keepAlive}"></td>
+            <td th:text="${recorder.cancelAfterSeconds}"></td>
+            <td th:text="${#dates.format(recorder.birthTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td th:text="${#dates.format(recorder.upTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td>
+                <form th:action="@{/recorder/stopAndRemove}" method="post">
+                    <input type="hidden" name="key" th:value="${recorder.key}">
+                    <button type="submit">X</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

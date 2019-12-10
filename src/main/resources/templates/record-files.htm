@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="common/head::head"></head>
+<body>
+<div th:include="common/nav::nav" class="tabs"></div>
+<div class="content">
+    <table>
+        <tr>
+            <th>key</th>
+            <th>time</th>
+            <th>delete</th>
+        </tr>
+        <tr th:each="recordFile : ${recordFiles}">
+            <td><a th:href="@{/hls/play-record/} + ${recordFile.key}" th:text="${recordFile.key}" target="_blank"></a>
+            </td>
+            <td th:text="${#dates.format(recordFile.time, 'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td>
+                <form th:action="@{/record-files/delete}" method="post">
+                    <input type="hidden" name="key" th:value="${recordFile.key}">
+                    <button type="submit">X</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

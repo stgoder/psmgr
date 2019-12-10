@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+<script th:src="@{/static/js/hls.js}"></script>
+<video id="videoElement" controls muted></video>
+<script>
+    var video = document.getElementById('videoElement');
+    if(Hls.isSupported()) {
+        var hls = new Hls();
+        hls.loadSource('[[${url}]]');
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED,function() {
+            video.play();
+        });
+    }
+</script>
+</body>
+</html>
