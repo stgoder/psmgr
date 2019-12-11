@@ -21,7 +21,7 @@ public class PusherRest {
         for (Pusher pusher : Pusher.pushers()) {
             pushers.add(Pusher1.fromPusher(pusher));
         }
-        return new Resp(Code.REQUEST_OK, "list", pushers);
+        return new Resp(Code.REQUEST_OK, pushers);
     }
 
     @PostMapping("/startAndPut")

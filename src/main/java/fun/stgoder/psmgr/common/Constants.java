@@ -16,6 +16,8 @@ public class Constants {
     public static final String RECORD_PATH;
     public static final int HLS_TIME;
     public static final String HLS_PATH;
+    public static final boolean WITH_NGINX;
+    public static final String NGINX_PATH;
 
     static {
         Yaml yaml = new Yaml();
@@ -27,7 +29,7 @@ public class Constants {
 
         Map myConfig = (Map) base.get("myConfig");
         TEST_MODE = (boolean) myConfig.getOrDefault("test-mode", false);
-        localIpv4 = (String) myConfig.getOrDefault("local-ipv4", "192.168.1.137");
+        localIpv4 = (String) myConfig.getOrDefault("local-ipv4", "192.168.1.214");
         FFMPEG_PATH = (String) myConfig.getOrDefault("ffmpeg-path", "ffmpeg");
         PSLOG_PATH = (String) myConfig.getOrDefault("pslog-path", "/home/stgoder/psmgr/record");
         File pslogDir = new File(PSLOG_PATH);
@@ -42,6 +44,17 @@ public class Constants {
         File hlsDir = new File(HLS_PATH);
         if (!hlsDir.exists())
             hlsDir.mkdirs();
+        if (OS.isLINUX()) {
+            WITH_NGINX = (boolean) myConfig.getOrDefault("with-nginx", true);
+        } else {
+            WITH_NGINX = false;
+        }
+        NGINX_PATH = (String) myConfig.getOrDefault("nginx-path", "/home/stgoder/psmgr/nginx");
+        if (WITH_NGINX) {
+            File nginxDir = new File(NGINX_PATH);
+            if (!nginxDir.exists())
+                nginxDir.mkdirs();
+        }
     }
 
     private Constants() {

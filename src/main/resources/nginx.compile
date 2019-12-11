@@ -1,0 +1,13 @@
+./configure --add-module=/home/stgoder/github/nginx-http-flv-module/ \
+--prefix=. \
+--sbin-path=nginx \
+--conf-path=nginx.conf \
+--error-log-path=logs/error.log \
+--http-log-path=logs/access.log \
+--pid-path=nginx.pid \
+--lock-path=nginx.lock \
+--http-client-body-temp-path=client_temp \
+--http-proxy-temp-path=proxy_temp \
+--http-fastcgi-temp-path=fastcgi_temp \
+--http-uwsgi-temp-path=uwsgi_temp \
+--http-scgi-temp-path=scgi_temp

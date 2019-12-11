@@ -19,7 +19,7 @@ import java.util.List;
 @RequestMapping("/live-hls")
 public class LiveHlsView {
     @GetMapping({"/", ""})
-    public ModelAndView recorder(ModelAndView mv) {
+    public ModelAndView hls(ModelAndView mv) {
         mv.setViewName("live-hls");
         mv.addObject("title", "live-hls");
         mv.addObject("tab", "live-hls");
@@ -54,6 +54,4 @@ public class LiveHlsView {
         Hls.stopAndRemove(key);
         return mv;
     }
-
-
 }

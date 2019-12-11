@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="common/head::head"></head>
+<body>
+<div th:include="common/nav::nav" class="tabs"></div>
+<div class="content">
+    <table>
+        <tr>
+            <th>psFlg</th>
+            <th>alive</th>
+            <th>pids</th>
+            <th>opts</th>
+        </tr>
+        <tr>
+            <td th:text="${nginx.psFlg}"></td>
+            <td th:text="${nginx.alive}"></td>
+            <td>
+                <div th:each="pid : ${nginx.pids}" th:text="${pid}" style="display:inline-block;"></div>
+            </td>
+            <td>
+                <form th:action="@{/nginx/restart}" method="post" style="display:inline-block;">
+                    <button type="submit">restart</button>
+                </form>
+                <form th:action="@{/nginx/reload}" method="post" style="display:inline-block;">
+                    <button type="submit">reload</button>
+                </form>
+                <form th:action="@{/nginx/stop}" method="post" style="display:inline-block;">
+                    <button type="submit">stop</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

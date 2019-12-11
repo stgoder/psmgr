@@ -3,13 +3,14 @@
 <head></head>
 <body>
 <script th:src="@{/static/js/flv.js}"></script>
-<video id="videoElement"></video>
+<video id="videoElement" controls muted></video>
 <script>
     if (flvjs.isSupported()) {
         var videoElement = document.getElementById('videoElement');
         var flvPlayer = flvjs.createPlayer({
             type: 'flv',
-            url: 'ws://' + '[[${localIpv4}]]' + ':8000/live/' + '[[${key}]]' + '.flv'
+            // url: 'ws://' + '[[${localIpv4}]]' + ':8000/live/' + '[[${key}]]' + '.flv' // node-media-server
+            url: 'http://' + '[[${localIpv4}]]' + ':8000/live?app=live&stream=' + '[[${key}]]' // nginx-http-flv-module
         });
         flvPlayer.attachMediaElement(videoElement);
         flvPlayer.load();
