@@ -69,8 +69,8 @@ public class Hls {
             cmd.add(Constants.FFMPEG_PATH)
                     .add("-fflags")
                     .add("genpts")
-                    //.add("-rtsp_transport")
-                    //.add("tcp")
+                    .add("-rtsp_transport")
+                    .add("tcp")
                     .add("-i")
                     .add(url)
                     .add("-c:v")
@@ -80,15 +80,17 @@ public class Hls {
                     .add("-hls_time")
                     .add(String.valueOf(Constants.HLS_TIME))
                     .add("-hls_list_size")
-                    .add("0")
+                    .add("10")
+                    .add("-hls_wrap")
+                    .add("10")
                     .add(hlsTsDirPath + File.separator + "out.m3u8");
         }
         if (OS.isWIN()) {
             cmd.add(Constants.FFMPEG_PATH)
                     .add("-fflags")
                     .add("genpts")
-                    //.add("-rtsp_transport")
-                    //.add("tcp")
+                    .add("-rtsp_transport")
+                    .add("tcp")
                     .add("-i")
                     .add(url)
                     .add("-c:v")
@@ -98,7 +100,9 @@ public class Hls {
                     .add("-hls_time")
                     .add(String.valueOf(Constants.HLS_TIME))
                     .add("-hls_list_size")
-                    .add("0")
+                    .add("10")
+                    .add("-hls_wrap")
+                    .add("10")
                     .add(hlsTsDirPath + File.separator + "out.m3u8");
         }
         this.ps = new Ps(cmd);
@@ -174,27 +178,31 @@ class StatusChecker extends Thread {
     @Override
     public void run() {
         while (true) {
-            for (Hls hls : Hls.hlss()) {
-                String key = hls.key();
-                boolean shouldBeCancelled = hls.cancelAfterSeconds() <= 0 ? false :
-                        ((System.currentTimeMillis() - hls.birthTime()
-                                >= hls.cancelAfterSeconds() * 1000) ? true : false);
-                if (shouldBeCancelled) {
-                    System.out.println("hls should be cancelled");
-                    Hls.stopAndRemove(key);
-                } else {
-                    if (hls.keepAlive()) {
-                        if (!hls.isAlive()) {
-                            System.out.println("ps " + key + " exited, pull up");
-                            try {
-                                hls.startStreaming()
-                                        .upTime(System.currentTimeMillis());
-                            } catch (ExecException e) {
-                                e.printStackTrace();
+            try {
+                for (Hls hls : Hls.hlss()) {
+                    String key = hls.key();
+                    boolean shouldBeCancelled = hls.cancelAfterSeconds() <= 0 ? false :
+                            ((System.currentTimeMillis() - hls.birthTime()
+                                    >= hls.cancelAfterSeconds() * 1000) ? true : false);
+                    if (shouldBeCancelled) {
+                        System.out.println("hls should be cancelled");
+                        Hls.stopAndRemove(key);
+                    } else {
+                        if (hls.keepAlive()) {
+                            if (!hls.isAlive()) {
+                                System.out.println("ps " + key + " exited, pull up");
+                                try {
+                                    hls.startStreaming()
+                                            .upTime(System.currentTimeMillis());
+                                } catch (ExecException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             try {
                 sleep(1000 * 5);

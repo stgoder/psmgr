@@ -178,27 +178,31 @@ class StatusChecker extends Thread {
     @Override
     public void run() {
         while (true) {
-            for (Pusher pusher : Pusher.pushers()) {
-                String key = pusher.key();
-                boolean shouldBeCancelled = pusher.cancelAfterSeconds() <= 0 ? false :
-                        ((System.currentTimeMillis() - pusher.birthTime()
-                                >= pusher.cancelAfterSeconds() * 1000) ? true : false);
-                if (shouldBeCancelled) {
-                    System.out.println("pusher should be cancelled");
-                    Pusher.stopAndRemove(key);
-                } else {
-                    if (pusher.keepAlive()) {
-                        if (!pusher.isAlive()) {
-                            System.out.println("ps " + key + " exited, pull up");
-                            try {
-                                pusher.pullRtspPushRtmp()
-                                        .upTime(System.currentTimeMillis());
-                            } catch (ExecException e) {
-                                e.printStackTrace();
+            try {
+                for (Pusher pusher : Pusher.pushers()) {
+                    String key = pusher.key();
+                    boolean shouldBeCancelled = pusher.cancelAfterSeconds() <= 0 ? false :
+                            ((System.currentTimeMillis() - pusher.birthTime()
+                                    >= pusher.cancelAfterSeconds() * 1000) ? true : false);
+                    if (shouldBeCancelled) {
+                        System.out.println("pusher should be cancelled");
+                        Pusher.stopAndRemove(key);
+                    } else {
+                        if (pusher.keepAlive()) {
+                            if (!pusher.isAlive()) {
+                                System.out.println("ps " + key + " exited, pull up");
+                                try {
+                                    pusher.pullRtspPushRtmp()
+                                            .upTime(System.currentTimeMillis());
+                                } catch (ExecException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             try {
                 sleep(1000 * 5);
