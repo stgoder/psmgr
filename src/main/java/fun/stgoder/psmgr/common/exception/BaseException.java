@@ -1,6 +1,7 @@
 package fun.stgoder.psmgr.common.exception;
 
 public class BaseException extends Exception {
+    private static final long serialVersionUID = 8557285382037848574L;
     private int code;
     private String message;
 

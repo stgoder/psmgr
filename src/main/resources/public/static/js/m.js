@@ -1,3 +1,3 @@
 function jumpTo(path) {
-	window.location.href = path;
+    window.location.href = path;
 }

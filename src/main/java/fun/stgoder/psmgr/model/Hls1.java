@@ -1,6 +1,5 @@
 package fun.stgoder.psmgr.model;
 
-
 import fun.stgoder.psmgr.ps.live.Hls;
 
 public class Hls1 {

@@ -1,10 +1,11 @@
 package fun.stgoder.psmgr.common;
 
-import org.yaml.snakeyaml.Yaml;
-
 import java.io.File;
 import java.util.Map;
 
+import org.yaml.snakeyaml.Yaml;
+
+@SuppressWarnings(value = {"rawtypes", "unchecked"})
 public class Constants {
     public static final int SERVER_PORT;
     public static final String SERVER_SERVLET_CONTEXT_PATH;
