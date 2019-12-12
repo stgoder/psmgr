@@ -28,8 +28,10 @@ spring:
     mode: HTML
     servlet:
       content-type: text/html; charset=utf-8
-  jackson:
+  gson:
     date-format: 'yyyy-MM-dd HH:mm:ss'
+    serialize-nulls: true
+    pretty-printing: true
 
 logging:
   path: /home/stgoder/psmgr/logs
