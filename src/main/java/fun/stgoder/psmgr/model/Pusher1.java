@@ -10,6 +10,7 @@ public class Pusher1 {
     private long cancelAfterSeconds;
     private long birthTime;
     private long upTime;
+    private boolean alive;
 
     public static Pusher1 fromPusher(Pusher pusher) {
         Pusher1 pusher1 = new Pusher1();
@@ -20,6 +21,7 @@ public class Pusher1 {
         pusher1.setCancelAfterSeconds(pusher.cancelAfterSeconds());
         pusher1.setBirthTime(pusher.birthTime());
         pusher1.setUpTime(pusher.upTime());
+        pusher1.setAlive(pusher.isAlive());
         return pusher1;
     }
 
@@ -77,5 +79,13 @@ public class Pusher1 {
 
     public void setUpTime(long upTime) {
         this.upTime = upTime;
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
     }
 }

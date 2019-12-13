@@ -49,6 +49,7 @@
             <th>key</th>
             <th>url</th>
             <th>keepAlive</th>
+            <th>alive</th>
             <th>cancelAfterSeconds</th>
             <th>birthTime</th>
             <th>upTime</th>
@@ -58,6 +59,7 @@
             <td><a th:href="@{/hls/play-live/} + ${hls.key}" th:text="${hls.key}" target="_blank"></a></td>
             <td th:text="${hls.url}"></td>
             <td th:text="${hls.keepAlive}"></td>
+            <td th:text="${hls.alive}"></td>
             <td th:text="${hls.cancelAfterSeconds}"></td>
             <td th:text="${#dates.format(hls.birthTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
             <td th:text="${#dates.format(hls.upTime, 'yyyy-MM-dd HH:mm:ss')}"></td>

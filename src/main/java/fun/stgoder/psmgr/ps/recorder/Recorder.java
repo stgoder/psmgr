@@ -49,6 +49,10 @@ public class Recorder {
         return recorders.values();
     }
 
+    public static Recorder get(String key) {
+        return recorders.get(key);
+    }
+
     private String key;
     private String url;
     private Ps ps;
@@ -81,7 +85,9 @@ public class Recorder {
                     .add(String.valueOf(Constants.HLS_TIME))
                     .add("-hls_list_size")
                     .add("0")
-                    .add(recordTsDirPath + File.separator + "out.m3u8");
+                    .add(recordTsDirPath + File.separator + "out.m3u8")
+                    .add("-loglevel")
+                    .add("error");
         }
         if (OS.isWIN()) {
             cmd.add(Constants.FFMPEG_PATH)
@@ -99,7 +105,9 @@ public class Recorder {
                     .add(String.valueOf(Constants.HLS_TIME))
                     .add("-hls_list_size")
                     .add("0")
-                    .add(recordTsDirPath + File.separator + "out.m3u8");
+                    .add(recordTsDirPath + File.separator + "out.m3u8")
+                    .add("-loglevel")
+                    .add("error");
         }
         this.ps = new Ps(cmd);
     }
@@ -201,7 +209,7 @@ class StatusChecker extends Thread {
                 e.printStackTrace();
             }
             try {
-                sleep(1000 * 5);
+                sleep(1000 * 30);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

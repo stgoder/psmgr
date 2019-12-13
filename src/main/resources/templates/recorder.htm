@@ -49,6 +49,7 @@
             <th>key</th>
             <th>url</th>
             <th>keepAlive</th>
+            <th>alive</th>
             <th>cancelAfterSeconds</th>
             <th>birthTime</th>
             <th>upTime</th>
@@ -58,6 +59,7 @@
             <td><a th:href="@{/hls/play-record/} + ${recorder.key}" th:text="${recorder.key}" target="_blank"></a></td>
             <td th:text="${recorder.url}"></td>
             <td th:text="${recorder.keepAlive}"></td>
+            <td th:text="${recorder.alive}"></td>
             <td th:text="${recorder.cancelAfterSeconds}"></td>
             <td th:text="${#dates.format(recorder.birthTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
             <td th:text="${#dates.format(recorder.upTime, 'yyyy-MM-dd HH:mm:ss')}"></td>

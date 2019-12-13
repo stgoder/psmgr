@@ -25,6 +25,14 @@ public class LiveHlsRest {
         return new Resp(Code.REQUEST_OK, hlss);
     }
 
+    @GetMapping("/{key}")
+    public Resp liveHls(@PathVariable("key") String key) throws BLException {
+        Hls hls = Hls.get(key);
+        if (hls == null)
+            throw new BLException(Code.REQUEST_ERR, "live hls not exist");
+        return new Resp(Code.REQUEST_OK, Hls1.fromHls(hls));
+    }
+
     @PostMapping("/startAndPut")
     public Resp startAndPut(@RequestParam("key") String key,
                             @RequestParam("url") String url,

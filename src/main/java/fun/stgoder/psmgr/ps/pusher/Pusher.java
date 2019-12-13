@@ -50,6 +50,10 @@ public class Pusher {
         return pushers.values();
     }
 
+    public static Pusher get(String key) {
+        return pushers.get(key);
+    }
+
     private String key;
     private String rtspUrl;
     private String rtmpUrl;
@@ -80,7 +84,9 @@ public class Pusher {
                     .add("tcp")
                     .add("-f")
                     .add("flv")
-                    .add(rtmpUrl);
+                    .add(rtmpUrl)
+                    .add("-loglevel")
+                    .add("error");
         }
         if (OS.isWIN()) {
             cmd.add(Constants.FFMPEG_PATH)
@@ -97,7 +103,9 @@ public class Pusher {
                     .add("tcp")
                     .add("-f")
                     .add("flv")
-                    .add(rtmpUrl);
+                    .add(rtmpUrl)
+                    .add("-loglevel")
+                    .add("error");
         }
         this.ps = new Ps(cmd);
     }
@@ -205,7 +213,7 @@ class StatusChecker extends Thread {
                 e.printStackTrace();
             }
             try {
-                sleep(1000 * 5);
+                sleep(1000 * 30);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

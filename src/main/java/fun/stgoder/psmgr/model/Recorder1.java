@@ -9,6 +9,7 @@ public class Recorder1 {
     private long cancelAfterSeconds;
     private long birthTime;
     private long upTime;
+    private boolean alive;
 
     public static Recorder1 fromRecorder(Recorder recorder) {
         Recorder1 recorder1 = new Recorder1();
@@ -18,6 +19,7 @@ public class Recorder1 {
         recorder1.setCancelAfterSeconds(recorder.cancelAfterSeconds());
         recorder1.setBirthTime(recorder.birthTime());
         recorder1.setUpTime(recorder.upTime());
+        recorder1.setAlive(recorder.isAlive());
         return recorder1;
     }
 
@@ -67,5 +69,13 @@ public class Recorder1 {
 
     public void setUpTime(long upTime) {
         this.upTime = upTime;
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
     }
 }

@@ -49,6 +49,10 @@ public class Hls {
         return hlss.values();
     }
 
+    public static Hls get(String key) {
+        return hlss.get(key);
+    }
+
     private String key;
     private String url;
     private Ps ps;
@@ -83,7 +87,9 @@ public class Hls {
                     .add("10")
                     .add("-hls_wrap")
                     .add("10")
-                    .add(hlsTsDirPath + File.separator + "out.m3u8");
+                    .add(hlsTsDirPath + File.separator + "out.m3u8")
+                    .add("-loglevel")
+                    .add("error");
         }
         if (OS.isWIN()) {
             cmd.add(Constants.FFMPEG_PATH)
@@ -103,7 +109,9 @@ public class Hls {
                     .add("10")
                     .add("-hls_wrap")
                     .add("10")
-                    .add(hlsTsDirPath + File.separator + "out.m3u8");
+                    .add(hlsTsDirPath + File.separator + "out.m3u8")
+                    .add("-loglevel")
+                    .add("error");
         }
         this.ps = new Ps(cmd);
     }
@@ -205,7 +213,7 @@ class StatusChecker extends Thread {
                 e.printStackTrace();
             }
             try {
-                sleep(1000 * 5);
+                sleep(1000 * 30);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

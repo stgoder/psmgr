@@ -24,6 +24,14 @@ public class PusherRest {
         return new Resp(Code.REQUEST_OK, pushers);
     }
 
+    @GetMapping("/{key}")
+    public Resp pusher(@PathVariable("key") String key) throws BLException {
+        Pusher pusher = Pusher.get(key);
+        if (pusher == null)
+            throw new BLException(-1, "pusher not exist");
+        return new Resp(Code.REQUEST_OK, Pusher1.fromPusher(pusher));
+    }
+
     @PostMapping("/startAndPut")
     public Resp start(@RequestParam("key") String key,
                       @RequestParam("rtspUrl") String rtspUrl,

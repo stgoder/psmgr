@@ -24,6 +24,14 @@ public class RecorderRest {
         return new Resp(Code.REQUEST_OK, recorders);
     }
 
+    @GetMapping("/{key}")
+    public Resp recorder(@PathVariable("key") String key) throws BLException {
+        Recorder recorder = Recorder.get(key);
+        if (recorder == null)
+            throw new BLException(Code.REQUEST_ERR, "recorder not exist");
+        return new Resp(Code.REQUEST_OK, Recorder1.fromRecorder(recorder));
+    }
+
     @PostMapping("/startAndPut")
     public Resp startAndPut(@RequestParam("key") String key,
                             @RequestParam("url") String url,

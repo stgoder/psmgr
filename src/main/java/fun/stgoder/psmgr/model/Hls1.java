@@ -9,6 +9,7 @@ public class Hls1 {
     private long cancelAfterSeconds;
     private long birthTime;
     private long upTime;
+    private boolean alive;
 
     public static Hls1 fromHls(Hls hls) {
         Hls1 hls1 = new Hls1();
@@ -18,6 +19,7 @@ public class Hls1 {
         hls1.setCancelAfterSeconds(hls.cancelAfterSeconds());
         hls1.setBirthTime(hls.birthTime());
         hls1.setUpTime(hls.upTime());
+        hls1.setAlive(hls.isAlive());
         return hls1;
     }
 
@@ -67,5 +69,13 @@ public class Hls1 {
 
     public void setUpTime(long upTime) {
         this.upTime = upTime;
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
     }
 }
