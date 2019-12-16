@@ -45,8 +45,8 @@ public class Nginx {
                         .add("-c")
                         .add("chmod +x " + Constants.NGINX_PATH + File.separator + NGINX_BIN_FILENAME)).exec();
         if (out.getExitValue() != 0) {
-            System.out.println(out.getError());
-            throw new ExecException(-1, out.getError());
+            System.out.println(out.toString());
+            throw new ExecException(-1, out.toString());
         }
         File nginxLogsDir = new File(Constants.NGINX_PATH + File.separator + "logs");
         if (!nginxLogsDir.exists())
@@ -61,8 +61,8 @@ public class Nginx {
                 .add("-p")
                 .add(Constants.NGINX_PATH)).exec();
         if (out.getExitValue() != 0) {
-            System.out.println(out.getError());
-            throw new ExecException(-1, out.getError());
+            System.out.println(out.toString());
+            throw new ExecException(-1, out.toString());
         }
     }
 
@@ -74,8 +74,8 @@ public class Nginx {
                 .add("-p")
                 .add(Constants.NGINX_PATH).add("-s").add("reload")).exec();
         if (out.getExitValue() != 0) {
-            System.out.println(out.getError());
-            throw new ExecException(-1, out.getError());
+            System.out.println(out.toString());
+            throw new ExecException(-1, out.toString());
         }
     }
 
@@ -87,8 +87,8 @@ public class Nginx {
                 .add("-p")
                 .add(Constants.NGINX_PATH).add("-s").add("stop")).exec();
         if (out.getExitValue() != 0) {
-            System.out.println(out.getError());
-            throw new ExecException(-1, out.getError());
+            System.out.println(out.toString());
+            throw new ExecException(-1, out.toString());
         }
     }
 
@@ -97,6 +97,16 @@ public class Nginx {
         if (pids.size() > 0)
             return true;
         return false;
+    }
+
+    public static void redeploy() throws ExecException, IOException {
+        if (alive()) {
+            stop();
+            File nginxDir = new File(Constants.NGINX_PATH);
+            FileUtils.deleteDirectory(nginxDir);
+            init();
+            start();
+        }
     }
 
     public static void main(String[] args) throws Exception {

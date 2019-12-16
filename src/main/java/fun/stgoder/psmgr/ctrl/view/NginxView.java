@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,6 +60,13 @@ public class NginxView {
     public ModelAndView stop(ModelAndView mv) throws ExecException {
         mv.setViewName("redirect:/nginx/");
         Nginx.stop();
+        return mv;
+    }
+
+    @PostMapping("/redeploy")
+    public ModelAndView redeploy(ModelAndView mv) throws ExecException, IOException {
+        mv.setViewName("redirect:/nginx/");
+        Nginx.redeploy();
         return mv;
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +54,12 @@ public class NginxRest {
     @PostMapping("/stop")
     public Resp stop() throws ExecException {
         Nginx.stop();
+        return new Resp(Code.REQUEST_OK);
+    }
+
+    @PostMapping("/redeploy")
+    public Resp redeploy() throws ExecException, IOException {
+        Nginx.redeploy();
         return new Resp(Code.REQUEST_OK);
     }
 }

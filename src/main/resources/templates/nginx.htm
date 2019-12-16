@@ -27,6 +27,9 @@
                 <form th:action="@{/nginx/stop}" method="post" style="display:inline-block;">
                     <button type="submit">stop</button>
                 </form>
+                <form th:action="@{/nginx/redeploy}" method="post" style="display:inline-block;">
+                    <button type="submit">redeploy</button>
+                </form>
             </td>
         </tr>
     </table>
