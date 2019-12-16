@@ -22,10 +22,10 @@ public class Hls {
         statusChecker.start();
     }
 
-    public static void startAndPut(String key,
-                                   String url,
-                                   boolean keepAlive,
-                                   long cancelAfterSeconds) throws ExecException {
+    public static synchronized void startAndPut(String key,
+                                                String url,
+                                                boolean keepAlive,
+                                                long cancelAfterSeconds) throws ExecException {
         if (hlss.containsKey(key))
             return;
         Hls hls = new Hls(key, url)
@@ -37,7 +37,7 @@ public class Hls {
         hlss.put(key, hls);
     }
 
-    public static void stopAndRemove(String key) {
+    public static synchronized void stopAndRemove(String key) {
         Hls hls = hlss.get(key);
         if (hls == null)
             return;
@@ -116,12 +116,12 @@ public class Hls {
         this.ps = new Ps(cmd);
     }
 
-    public Hls startStreaming() throws ExecException {
+    public synchronized Hls startStreaming() throws ExecException {
         ps.execRedirect(new File(Constants.PSLOG_PATH + File.separator + key + ".log"));
         return this;
     }
 
-    public void cleanup() {
+    public synchronized void cleanup() {
         ps.cleanup();
     }
 

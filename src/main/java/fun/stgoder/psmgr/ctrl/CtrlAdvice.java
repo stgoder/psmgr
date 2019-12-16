@@ -38,6 +38,16 @@ public class CtrlAdvice {
                     .body(new Resp(code, message));
         } else if (uri.contains("/fs")) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentLength(0);
+        } else if (uri.contains("/hook/nginx")) {
+            int code = Code.REQUEST_ERR;
+            String message = e.getMessage();
+            if (e instanceof BaseException) {
+                BaseException baseException = (BaseException) e;
+                code = baseException.code();
+                message = baseException.message();
+            }
+            return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON)
+                    .body(new Resp(code, message));
         } else {
             ModelAndView mv = new ModelAndView("err");
             mv.addObject("title", e.getMessage());

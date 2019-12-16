@@ -1,9 +1,11 @@
 package fun.stgoder.psmgr.ctrl.view;
 
+import fun.stgoder.psmgr.common.Constants;
 import fun.stgoder.psmgr.common.exception.ExecException;
 import fun.stgoder.psmgr.model.Nginx1;
 import fun.stgoder.psmgr.ps.Ps;
 import fun.stgoder.psmgr.ps.nginx.Nginx;
+import fun.stgoder.psmgr.ps.pusher.Pusher;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,6 +55,12 @@ public class NginxView {
     public ModelAndView reload(ModelAndView mv) throws ExecException {
         mv.setViewName("redirect:/nginx/");
         Nginx.reload();
+        if (Constants.WITH_NGINX) {
+            final List<String> pullFailedPusherKeys = Pusher.reloadAllPushers();
+            for (String pullFailedPusherKey : pullFailedPusherKeys) {
+                System.out.println("reload pusher err key:" + pullFailedPusherKey);
+            }
+        }
         return mv;
     }
 

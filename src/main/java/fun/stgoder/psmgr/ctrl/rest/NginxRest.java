@@ -1,11 +1,13 @@
 package fun.stgoder.psmgr.ctrl.rest;
 
 import fun.stgoder.psmgr.common.Code;
+import fun.stgoder.psmgr.common.Constants;
 import fun.stgoder.psmgr.common.exception.ExecException;
 import fun.stgoder.psmgr.common.model.Resp;
 import fun.stgoder.psmgr.model.Nginx1;
 import fun.stgoder.psmgr.ps.Ps;
 import fun.stgoder.psmgr.ps.nginx.Nginx;
+import fun.stgoder.psmgr.ps.pusher.Pusher;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,7 +50,11 @@ public class NginxRest {
     @PostMapping("/reload")
     public Resp reload() throws ExecException {
         Nginx.reload();
-        return new Resp(Code.REQUEST_OK);
+        List<String> pullFailedPusherKeys = new ArrayList<>();
+        if (Constants.WITH_NGINX) {
+            pullFailedPusherKeys = Pusher.reloadAllPushers();
+        }
+        return new Resp(Code.REQUEST_OK, pullFailedPusherKeys);
     }
 
     @PostMapping("/stop")

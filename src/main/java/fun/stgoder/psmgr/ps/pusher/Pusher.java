@@ -8,9 +8,7 @@ import fun.stgoder.psmgr.ps.Ps;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Pusher {
     private static final Map<String, Pusher> pushers;
@@ -22,11 +20,11 @@ public class Pusher {
         statusChecker.start();
     }
 
-    public static void startAndPut(String key,
-                                   String rtspUrl,
-                                   String rtmpUrl,
-                                   boolean keepAlive,
-                                   long cancelAfterSeconds) throws ExecException {
+    public static synchronized void startAndPut(String key,
+                                                String rtspUrl,
+                                                String rtmpUrl,
+                                                boolean keepAlive,
+                                                long cancelAfterSeconds) throws ExecException {
         if (pushers.containsKey(key))
             return;
         Pusher pusher = new Pusher(key, rtspUrl, rtmpUrl)
@@ -38,12 +36,26 @@ public class Pusher {
         pushers.put(key, pusher);
     }
 
-    public static void stopAndRemove(String key) {
+    public static synchronized void stopAndRemove(String key) {
         Pusher pusher = pushers.get(key);
         if (pusher == null)
             return;
         pusher.cleanup();
         pushers.remove(key);
+    }
+
+    public static synchronized List<String> reloadAllPushers() {
+        List<String> pullFailedPusherKeys = new ArrayList<>();
+        for (Pusher pusher : pushers.values()) {
+            try {
+                pusher.pullRtspPushRtmp().upTime(System.currentTimeMillis());
+                System.out.println("reload pusher succ key:" + pusher.key());
+            } catch (Exception e) {
+                e.printStackTrace();
+                pullFailedPusherKeys.add(pusher.key());
+            }
+        }
+        return pullFailedPusherKeys;
     }
 
     public static Collection<Pusher> pushers() {
@@ -110,12 +122,12 @@ public class Pusher {
         this.ps = new Ps(cmd);
     }
 
-    public Pusher pullRtspPushRtmp() throws ExecException {
+    public synchronized Pusher pullRtspPushRtmp() throws ExecException {
         ps.execRedirect(new File(Constants.PSLOG_PATH + File.separator + key + ".log"));
         return this;
     }
 
-    public void cleanup() {
+    public synchronized void cleanup() {
         ps.cleanup();
     }
 

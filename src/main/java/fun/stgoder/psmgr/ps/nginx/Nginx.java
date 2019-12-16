@@ -6,6 +6,7 @@ import fun.stgoder.psmgr.common.exception.ExecException;
 import fun.stgoder.psmgr.ps.Cmd;
 import fun.stgoder.psmgr.ps.Out;
 import fun.stgoder.psmgr.ps.Ps;
+import fun.stgoder.psmgr.ps.pusher.Pusher;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -16,7 +17,7 @@ import java.util.List;
 public class Nginx {
     public static final String NGINX_BIN_FILENAME = "nginx.bin";
 
-    public static void init() throws IOException, ExecException {
+    public synchronized static void init() throws IOException, ExecException {
         File nginxDir = new File(Constants.NGINX_PATH);
         if (!nginxDir.exists())
             nginxDir.mkdirs();
@@ -53,7 +54,7 @@ public class Nginx {
             nginxLogsDir.mkdirs();
     }
 
-    public static void start() throws ExecException {
+    public synchronized static void start() throws ExecException {
         final Out out = new Ps(new Cmd()
                 .add(Constants.NGINX_PATH + File.separator + NGINX_BIN_FILENAME)
                 .add("-c")
@@ -66,7 +67,7 @@ public class Nginx {
         }
     }
 
-    public static void reload() throws ExecException {
+    public synchronized static void reload() throws ExecException {
         final Out out = new Ps(new Cmd()
                 .add(Constants.NGINX_PATH + File.separator + NGINX_BIN_FILENAME)
                 .add("-c")
@@ -79,7 +80,7 @@ public class Nginx {
         }
     }
 
-    public static void stop() throws ExecException {
+    public synchronized static void stop() throws ExecException {
         final Out out = new Ps(new Cmd()
                 .add(Constants.NGINX_PATH + File.separator + NGINX_BIN_FILENAME)
                 .add("-c")
@@ -99,7 +100,7 @@ public class Nginx {
         return false;
     }
 
-    public static void redeploy() throws ExecException, IOException {
+    public synchronized static void redeploy() throws ExecException, IOException {
         if (alive()) {
             stop();
             File nginxDir = new File(Constants.NGINX_PATH);

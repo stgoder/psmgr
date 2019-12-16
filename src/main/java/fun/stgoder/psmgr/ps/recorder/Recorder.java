@@ -22,7 +22,7 @@ public class Recorder {
         statusChecker.start();
     }
 
-    public static void startAndPut(String key,
+    public static synchronized void startAndPut(String key,
                                    String url,
                                    boolean keepAlive,
                                    long cancelAfterSeconds) throws ExecException {
@@ -37,7 +37,7 @@ public class Recorder {
         recorders.put(key, recorder);
     }
 
-    public static void stopAndRemove(String key) {
+    public static synchronized void stopAndRemove(String key) {
         Recorder recorder = recorders.get(key);
         if (recorder == null)
             return;
@@ -112,12 +112,12 @@ public class Recorder {
         this.ps = new Ps(cmd);
     }
 
-    public Recorder recordStream() throws ExecException {
+    public synchronized Recorder recordStream() throws ExecException {
         ps.execRedirect(new File(Constants.PSLOG_PATH + File.separator + key + ".log"));
         return this;
     }
 
-    public void cleanup() {
+    public synchronized void cleanup() {
         ps.cleanup();
     }
 
