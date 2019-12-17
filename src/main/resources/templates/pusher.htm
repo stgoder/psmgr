@@ -63,7 +63,8 @@
             <th>stopAndRemove</th>
         </tr>
         <tr th:each="pusher : ${pushers}">
-            <td><a th:href="@{/pusher/play-http-flv/} + ${pusher.key}" th:text="${pusher.key}" target="_blank"></a></td>
+            <td><a th:href="@{/pusher/play-http-flv/} + ${pusher.key} + '?type=nginx'" th:text="${pusher.key}"
+                   target="_blank"></a></td>
             <td th:text="${pusher.rtspUrl}"></td>
             <td th:text="${pusher.rtmpUrl}"></td>
             <td th:text="${pusher.keepAlive}"></td>

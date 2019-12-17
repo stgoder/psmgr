@@ -57,10 +57,15 @@ public class PusherView {
     }
 
     @GetMapping("/play-http-flv/{key}")
-    public ModelAndView play(@PathVariable("key") String key, ModelAndView mv) throws Exception {
+    public ModelAndView play(@PathVariable("key") String key,
+                             @RequestParam("type") String type, ModelAndView mv) throws Exception {
         mv.setViewName("play-http-flv");
-        mv.addObject("key", key);
-        mv.addObject("localIpv4", Constants.localIpv4);
+        String url = "http://" + Constants.localIpv4 + ":8000/live?app=live&stream=" + key;
+        if (StringUtils.equals(type, "nginx"))
+            url = "http://" + Constants.localIpv4 + ":8000/live?app=live&stream=" + key;
+        if (StringUtils.equals(type, "srs"))
+            url = "http://" + Constants.localIpv4 + ":8080/live/" + key + ".flv";
+        mv.addObject("url", url);
         return mv;
     }
 }
