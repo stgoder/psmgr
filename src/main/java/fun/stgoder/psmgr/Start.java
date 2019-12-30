@@ -15,7 +15,7 @@ import java.io.IOException;
 public class Start {
 
     public static void main(String[] args) throws ExecException, IOException {
-        if (OS.isLINUX() && Constants.WITH_NGINX) {
+        if ((OS.isLINUX() || OS.isMAC()) && Constants.WITH_NGINX) {
             Nginx.init();
             if (Nginx.alive())
                 Nginx.stop();

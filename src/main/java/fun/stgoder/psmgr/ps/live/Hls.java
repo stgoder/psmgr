@@ -69,7 +69,7 @@ public class Hls {
         File hlsTsDir = new File(hlsTsDirPath);
         if (!hlsTsDir.exists())
             hlsTsDir.mkdirs();
-        if (OS.isLINUX()) {
+        if (OS.isLINUX() || OS.isMAC()) {
             cmd.add(Constants.FFMPEG_PATH)
                     .add("-fflags")
                     .add("genpts")

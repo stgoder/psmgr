@@ -81,7 +81,7 @@ public class Pusher {
         this.rtmpUrl = rtmpUrl;
 
         Cmd cmd = new Cmd();
-        if (OS.isLINUX()) {
+        if (OS.isLINUX() || OS.isMAC()) {
             cmd.add(Constants.FFMPEG_PATH)
                     .add("-rtsp_transport")
                     .add("tcp")

@@ -6,7 +6,6 @@ import fun.stgoder.psmgr.common.exception.ExecException;
 import fun.stgoder.psmgr.ps.Cmd;
 import fun.stgoder.psmgr.ps.Out;
 import fun.stgoder.psmgr.ps.Ps;
-import fun.stgoder.psmgr.ps.pusher.Pusher;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;

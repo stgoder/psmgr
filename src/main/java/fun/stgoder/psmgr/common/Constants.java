@@ -45,7 +45,7 @@ public class Constants {
         File hlsDir = new File(HLS_PATH);
         if (!hlsDir.exists())
             hlsDir.mkdirs();
-        if (OS.isLINUX()) {
+        if (OS.isLINUX() || OS.isMAC()) {
             WITH_NGINX = (boolean) myConfig.getOrDefault("with-nginx", true);
         } else {
             WITH_NGINX = false;

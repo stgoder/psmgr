@@ -23,9 +23,9 @@ public class Recorder {
     }
 
     public static synchronized void startAndPut(String key,
-                                   String url,
-                                   boolean keepAlive,
-                                   long cancelAfterSeconds) throws ExecException {
+                                                String url,
+                                                boolean keepAlive,
+                                                long cancelAfterSeconds) throws ExecException {
         if (recorders.containsKey(key))
             return;
         Recorder recorder = new Recorder(key, url)
@@ -69,7 +69,7 @@ public class Recorder {
         File recordTsDir = new File(recordTsDirPath);
         if (!recordTsDir.exists())
             recordTsDir.mkdirs();
-        if (OS.isLINUX()) {
+        if (OS.isLINUX() || OS.isMAC()) {
             cmd.add(Constants.FFMPEG_PATH)
                     .add("-fflags")
                     .add("genpts")
