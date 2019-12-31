@@ -27,8 +27,8 @@ public class Ds extends BaseDataSource {
     public static void main(String[] args) {
         Ds.initSqlite0();
         Ds.sqlite0.dropTableIfExists("test_bean");
-        Ds.sqlite0.createTableFromBean(TestBean.class);
-        Ds.sqlite0.select(
+        //Ds.sqlite0.createTableFromBean(TestBean.class);
+        /*Ds.sqlite0.select(
                 new Sql().
                         select("tb.id, tb.name, tb1.text")
                         .from("test_bean").alias("tb")
@@ -57,6 +57,6 @@ public class Ds extends BaseDataSource {
                             .where("id = :id").sql(),
                     new Param("id", "5e016b8ec94c20126e69f67a"));
             conn.commit();
-        }
+        }*/
     }
 }
