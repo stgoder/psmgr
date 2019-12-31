@@ -53,3 +53,8 @@ myConfig:
   local-ipv4: '192.168.1.214'
   with-nginx: true
   nginx-path: '/home/stgoder/psmgr/nginx'
+  ds:
+    sqlite0:
+      url: jdbc:sqlite:/home/stgoder/psmgr/sqlite0.db
+      pool-size: 3
+      pool-name: sqlite0

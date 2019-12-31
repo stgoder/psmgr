@@ -2,6 +2,7 @@ package fun.stgoder.psmgr;
 
 import fun.stgoder.psmgr.common.Constants;
 import fun.stgoder.psmgr.common.OS;
+import fun.stgoder.psmgr.common.db.Ds;
 import fun.stgoder.psmgr.common.exception.ExecException;
 import fun.stgoder.psmgr.ps.nginx.Nginx;
 import org.springframework.boot.SpringApplication;
@@ -21,6 +22,8 @@ public class Start {
                 Nginx.stop();
             Nginx.start();
         }
+
+        Ds.initSqlite0();
 
         SpringApplication.run(Start.class, args);
     }
