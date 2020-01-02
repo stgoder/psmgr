@@ -55,7 +55,7 @@ myConfig:
   nginx-path: '/home/stgoder/psmgr/nginx'
   ds:
     sqlite0:
-      url: jdbc:sqlite:/home/stgoder/psmgr/sqlite0.db
-      #url: jdbc:sqlite:D:\home\stgoder\psmgr\sqlite0.db
+      db-file-path: /home/stgoder/psmgr/sqlite0.db
+      #db-file-path: D:\home\stgoder\psmgr\sqlite0.db
       pool-size: 3
       pool-name: sqlite0

@@ -20,7 +20,7 @@ public class Constants {
     public static final boolean WITH_NGINX;
     public static final String NGINX_PATH;
 
-    public static final String DS_SQLITE0_URL;
+    public static final String DS_SQLITE0_DB_FILE_PATH;
     public static final int DS_SQLITE0_POOL_SIZE;
     public static final String DS_SQLITE0_POOL_NAME;
 
@@ -64,8 +64,8 @@ public class Constants {
         // data source
         Map ds = (Map) myConfig.get("ds");
         Map sqlite0 = (Map) ds.get("sqlite0");
-        DS_SQLITE0_URL = (String) sqlite0.getOrDefault("url",
-                "jdbc:sqlite:/home/stgoder/psmgr/sqlite0.db");
+        DS_SQLITE0_DB_FILE_PATH = (String) sqlite0.getOrDefault("db-file-path",
+                "/home/stgoder/psmgr/sqlite0.db");
         DS_SQLITE0_POOL_SIZE = (int) sqlite0.getOrDefault("pool-size", "3");
         DS_SQLITE0_POOL_NAME = (String) sqlite0.getOrDefault("pool-name", "sqlite0");
     }
