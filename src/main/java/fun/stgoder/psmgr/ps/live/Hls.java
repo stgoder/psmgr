@@ -76,6 +76,8 @@ public class Hls {
                     .add("-rtsp_transport")
                     .add("tcp")
                     .add("-i")
+                    .add("-stimeout")
+                    .add("5000000") // keep alive
                     .add(url)
                     .add("-c:v")
                     .add("copy")

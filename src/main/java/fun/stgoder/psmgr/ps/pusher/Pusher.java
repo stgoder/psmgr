@@ -87,6 +87,8 @@ public class Pusher {
                     .add("tcp")
                     .add("-re")
                     .add("-i")
+                    .add("-stimeout")
+                    .add("5000000") // keep alive
                     .add(rtspUrl)
                     .add("-c:v")
                     .add("copy")
@@ -96,6 +98,8 @@ public class Pusher {
                     .add("tcp")
                     .add("-f")
                     .add("flv")
+                    .add("-stimeout")
+                    .add("5000000") // keep alive
                     .add(rtmpUrl)
                     .add("-loglevel")
                     .add("error");
@@ -106,6 +110,8 @@ public class Pusher {
                     .add("tcp")
                     .add("-re")
                     .add("-i")
+                    .add("-stimeout")
+                    .add("5000000") // keep alive
                     .add(rtspUrl)
                     .add("-c:v")
                     .add("copy")
@@ -115,6 +121,8 @@ public class Pusher {
                     .add("tcp")
                     .add("-f")
                     .add("flv")
+                    .add("-stimeout")
+                    .add("5000000") // keep alive
                     .add(rtmpUrl)
                     .add("-loglevel")
                     .add("error");
