@@ -34,18 +34,18 @@ public class PusherRest {
 
     @PostMapping("/startAndPut")
     public Resp start(@RequestParam("key") String key,
-                      @RequestParam("rtspUrl") String rtspUrl,
+                      @RequestParam("source") String source,
                       @RequestParam("rtmpUrl") String rtmpUrl,
                       @RequestParam("keepAlive") boolean keepAlive,
                       @RequestParam(value = "cancelAfterSeconds", required = false, defaultValue = "0")
                               long cancelAfterSeconds) throws ExecException, BLException {
         if (StringUtils.isBlank(key))
             throw new BLException(-1, "key blank");
-        if (StringUtils.isBlank(rtspUrl))
-            throw new BLException(-1, "rtspUrl blank");
+        if (StringUtils.isBlank(source))
+            throw new BLException(-1, "source blank");
         if (StringUtils.isBlank(rtmpUrl))
             throw new BLException(-1, "rtmpUrl blank");
-        Pusher.startAndPut(key, rtspUrl, rtmpUrl, keepAlive, cancelAfterSeconds);
+        Pusher.startAndPut(key, source, rtmpUrl, keepAlive, cancelAfterSeconds);
         return new Resp(Code.REQUEST_OK);
     }
 

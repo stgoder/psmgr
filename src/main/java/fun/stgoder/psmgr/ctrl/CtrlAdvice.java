@@ -49,9 +49,17 @@ public class CtrlAdvice {
             return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON)
                     .body(new Resp(code, message));
         } else {
+            int code = Code.REQUEST_ERR;
+            String message = e.getMessage();
+            if (e instanceof BaseException) {
+                BaseException baseException = (BaseException) e;
+                code = baseException.code();
+                message = baseException.message();
+            }
             ModelAndView mv = new ModelAndView("err");
-            mv.addObject("title", e.getMessage());
-            mv.addObject("msg", e.getMessage());
+            mv.addObject("title", message);
+            mv.addObject("code", code);
+            mv.addObject("msg", message);
             return mv;
         }
     }

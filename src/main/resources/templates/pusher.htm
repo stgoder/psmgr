@@ -14,9 +14,12 @@
             </tr>
             <tr>
                 <td>
-                    <input type="text" name="rtspUrl" required="required" placeholder="rtspUrl">
+                    <input type="text" name="source" required="required" placeholder="source">
                 </td>
-                <td>rtsp://192.168.1.136/81</td>
+                <td>
+                    <div>rtsp://admin:a00000000@192.168.1.81:554/h264/ch1/main/av_stream</div>
+                    <div>/home/stgoder/5e016b8ec94c20126e69f67a.mp4</div>
+                </td>
             </tr>
             <tr>
                 <td>
@@ -53,19 +56,19 @@
     <table>
         <tr>
             <th>key</th>
-            <th>rtspUrl</th>
+            <th>source</th>
             <th>rtmpUrl</th>
             <th>keepAlive</th>
             <th>alive</th>
             <th>cancelAfterSeconds</th>
             <th>birthTime</th>
             <th>upTime</th>
-            <th>stopAndRemove</th>
+            <th>opt</th>
         </tr>
         <tr th:each="pusher : ${pushers}">
             <td><a th:href="@{/pusher/play-http-flv/} + ${pusher.key} + '?type=nginx'" th:text="${pusher.key}"
                    target="_blank"></a></td>
-            <td th:text="${pusher.rtspUrl}"></td>
+            <td th:text="${pusher.source}"></td>
             <td th:text="${pusher.rtmpUrl}"></td>
             <td th:text="${pusher.keepAlive}"></td>
             <td th:text="${pusher.alive}"></td>

@@ -2,6 +2,7 @@ package fun.stgoder.psmgr.ctrl.rest;
 
 import fun.stgoder.psmgr.common.Code;
 import fun.stgoder.psmgr.common.Constants;
+import fun.stgoder.psmgr.common.OS;
 import fun.stgoder.psmgr.common.exception.ExecException;
 import fun.stgoder.psmgr.common.model.Resp;
 import fun.stgoder.psmgr.model.Nginx1;
@@ -26,7 +27,7 @@ public class NginxRest {
         nginx.setPsFlg(Nginx.NGINX_BIN_FILENAME);
         List<Integer> pids = new ArrayList<>();
         try {
-            pids = Ps.pids(Nginx.NGINX_BIN_FILENAME);
+            pids = OS.pids(Nginx.NGINX_BIN_FILENAME);
             if (pids.size() > 0)
                 nginx.setAlive(true);
         } catch (ExecException e) {

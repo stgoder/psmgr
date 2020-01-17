@@ -1,6 +1,7 @@
 package fun.stgoder.psmgr.ctrl.view;
 
 import fun.stgoder.psmgr.common.Constants;
+import fun.stgoder.psmgr.common.OS;
 import fun.stgoder.psmgr.common.exception.ExecException;
 import fun.stgoder.psmgr.model.Nginx1;
 import fun.stgoder.psmgr.ps.Ps;
@@ -28,7 +29,7 @@ public class NginxView {
         nginx.setPsFlg(Nginx.NGINX_BIN_FILENAME);
         List<Integer> pids = new ArrayList<>();
         try {
-            pids = Ps.pids(Nginx.NGINX_BIN_FILENAME);
+            pids = OS.pids(Nginx.NGINX_BIN_FILENAME);
             if (pids.size() > 0)
                 nginx.setAlive(true);
         } catch (ExecException e) {

@@ -53,7 +53,7 @@
             <th>cancelAfterSeconds</th>
             <th>birthTime</th>
             <th>upTime</th>
-            <th>stopAndRemove</th>
+            <th>opt</th>
         </tr>
         <tr th:each="recorder : ${recorders}">
             <td><a th:href="@{/hls/play-record/} + ${recorder.key}" th:text="${recorder.key}" target="_blank"></a></td>

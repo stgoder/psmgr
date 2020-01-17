@@ -2,6 +2,10 @@ package fun.stgoder.psmgr.ps.pusher;
 
 import fun.stgoder.psmgr.common.Constants;
 import fun.stgoder.psmgr.common.OS;
+import fun.stgoder.psmgr.common.db.Ds;
+import fun.stgoder.psmgr.common.db.Param;
+import fun.stgoder.psmgr.common.db.PusherEntity;
+import fun.stgoder.psmgr.common.db.Sql;
 import fun.stgoder.psmgr.common.exception.ExecException;
 import fun.stgoder.psmgr.ps.Cmd;
 import fun.stgoder.psmgr.ps.Ps;
@@ -21,19 +25,33 @@ public class Pusher {
     }
 
     public static synchronized void startAndPut(String key,
-                                                String rtspUrl,
+                                                String source,
                                                 String rtmpUrl,
                                                 boolean keepAlive,
                                                 long cancelAfterSeconds) throws ExecException {
         if (pushers.containsKey(key))
             return;
-        Pusher pusher = new Pusher(key, rtspUrl, rtmpUrl)
+        long now = System.currentTimeMillis();
+        Pusher pusher = new Pusher(key, source, rtmpUrl)
                 .keepAlive(keepAlive)
                 .cancelAfterSeconds(cancelAfterSeconds)
-                .pullRtspPushRtmp()
-                .birthTime(System.currentTimeMillis())
-                .upTime(System.currentTimeMillis());
+                .pushRtmp()
+                .birthTime(now)
+                .upTime(now);
         pushers.put(key, pusher);
+        Ds.sqlite0.insert(
+                new Sql()
+                        .insert(PusherEntity.class)
+                        .cols(PusherEntity.BCOLS)
+                        .values(PusherEntity.VALUES).sql(),
+                new Param()
+                        .add("key", key)
+                        .add("source", source)
+                        .add("rtmp_url", rtmpUrl)
+                        .add("keep_alive", keepAlive)
+                        .add("cancel_after_seconds", cancelAfterSeconds)
+                        .add("birth_time", now)
+                        .add("up_time", now));
     }
 
     public static synchronized void stopAndRemove(String key) {
@@ -42,13 +60,60 @@ public class Pusher {
             return;
         pusher.cleanup();
         pushers.remove(key);
+        Ds.sqlite0.delete(
+                new Sql()
+                        .delete(PusherEntity.class)
+                        .where("key = :key").sql(),
+                new Param("key", key));
+    }
+
+    public static void loadFromDB() {
+        new Thread(() -> {
+            List<PusherEntity> pusherEntities = Ds.sqlite0.select(
+                    new Sql()
+                            .select(PusherEntity.COLS)
+                            .from(PusherEntity.class).sql(), PusherEntity.class);
+            for (PusherEntity pusherEntity : pusherEntities) {
+                long now = System.currentTimeMillis();
+                String key = pusherEntity.getKey();
+                Pusher pusher = new Pusher(key, pusherEntity.getSource(), pusherEntity.getRtmpUrl())
+                        .keepAlive(pusherEntity.isKeepAlive())
+                        .cancelAfterSeconds(pusherEntity.getCancelAfterSeconds())
+                        .birthTime(pusherEntity.getBirthTime())
+                        .upTime(now);
+                try {
+                    pusher.pushRtmp();
+                    pushers.put(key, pusher);
+                    Ds.sqlite0.update(
+                            new Sql()
+                                    .update(PusherEntity.class)
+                                    .set("up_time = :up_time")
+                                    .where("key = :key").sql(),
+                            new Param()
+                                    .add("up_time", now)
+                                    .add("key", key));
+                } catch (ExecException e) {
+                    e.printStackTrace();
+                    System.err.println("load pusher: " + key + " err");
+                }
+            }
+        }).start();
     }
 
     public static synchronized List<String> reloadAllPushers() {
         List<String> pullFailedPusherKeys = new ArrayList<>();
         for (Pusher pusher : pushers.values()) {
             try {
-                pusher.pullRtspPushRtmp().upTime(System.currentTimeMillis());
+                long now = System.currentTimeMillis();
+                pusher.pushRtmp().upTime(System.currentTimeMillis());
+                Ds.sqlite0.update(
+                        new Sql()
+                                .update(PusherEntity.class)
+                                .set("up_time = :up_time")
+                                .where("key = :key").sql(),
+                        new Param()
+                                .add("up_time", now)
+                                .add("key", pusher.key()));
                 System.out.println("reload pusher succ key:" + pusher.key());
             } catch (Exception e) {
                 e.printStackTrace();
@@ -67,7 +132,7 @@ public class Pusher {
     }
 
     private String key;
-    private String rtspUrl;
+    private String source;
     private String rtmpUrl;
     private Ps ps;
     private boolean keepAlive;
@@ -75,62 +140,75 @@ public class Pusher {
     private long birthTime;
     private long upTime;
 
-    public Pusher(String key, String rtspUrl, String rtmpUrl) {
+    public Pusher(String key, String source, String rtmpUrl) {
         this.key = key;
-        this.rtspUrl = rtspUrl;
+        this.source = source;
         this.rtmpUrl = rtmpUrl;
-
+        boolean isFile = false;
+        try {
+            File file = new File(source);
+            if (file.isFile() && file.exists())
+                isFile = true;
+        } catch (Exception e) {
+            System.out.println("source not file");
+        }
         Cmd cmd = new Cmd();
         if (OS.isLINUX() || OS.isMAC()) {
-            cmd.add(Constants.FFMPEG_PATH)
-                    .add("-rtsp_transport")
-                    .add("tcp")
-                    .add("-re")
+            cmd.add(Constants.FFMPEG_PATH);
+            if (!isFile) {
+                if (source.startsWith("rtsp"))
+                    cmd.add("-rtsp_transport")
+                            .add("tcp");
+                cmd.add("-stimeout")
+                        .add("5000000"); // keep alive
+            }
+            cmd.add("-re")
                     .add("-i")
-                    .add("-stimeout")
-                    .add("5000000") // keep alive
-                    .add(rtspUrl)
+                    .add(source)
                     .add("-c:v")
                     .add("copy")
                     .add("-c:a")
                     .add("aac")
-                    .add("-rtsp_transport")
-                    .add("tcp")
                     .add("-f")
-                    .add("flv")
-                    .add("-stimeout")
-                    .add("5000000") // keep alive
-                    .add(rtmpUrl)
+                    .add("flv");
+            if (!isFile) {
+                cmd.add("-stimeout")
+                        .add("5000000"); // keep alive
+            }
+            cmd.add(rtmpUrl)
                     .add("-loglevel")
                     .add("error");
         }
         if (OS.isWIN()) {
-            cmd.add(Constants.FFMPEG_PATH)
-                    .add("-rtsp_transport")
-                    .add("tcp")
-                    .add("-re")
+            cmd.add(Constants.FFMPEG_PATH);
+            if (!isFile) {
+                if (source.startsWith("rtsp"))
+                    cmd.add("-rtsp_transport")
+                            .add("tcp");
+                cmd.add("-stimeout")
+                        .add("5000000"); // keep alive
+            }
+            cmd.add("-re")
                     .add("-i")
-                    .add("-stimeout")
-                    .add("5000000") // keep alive
-                    .add(rtspUrl)
+                    .add(source)
                     .add("-c:v")
                     .add("copy")
                     .add("-c:a")
                     .add("aac")
-                    .add("-rtsp_transport")
-                    .add("tcp")
                     .add("-f")
-                    .add("flv")
-                    .add("-stimeout")
-                    .add("5000000") // keep alive
-                    .add(rtmpUrl)
+                    .add("flv");
+            if (!isFile) {
+                cmd.add("-stimeout")
+                        .add("5000000"); // keep alive
+            }
+            cmd.add(rtmpUrl)
                     .add("-loglevel")
                     .add("error");
         }
         this.ps = new Ps(cmd);
     }
 
-    public synchronized Pusher pullRtspPushRtmp() throws ExecException {
+    public synchronized Pusher pushRtmp() throws ExecException {
         ps.execRedirect(new File(Constants.PSLOG_PATH + File.separator + key + ".log"));
         return this;
     }
@@ -147,8 +225,8 @@ public class Pusher {
         return key;
     }
 
-    public String rtspUrl() {
-        return rtspUrl;
+    public String source() {
+        return source;
     }
 
     public String rtmpUrl() {
@@ -220,8 +298,17 @@ class StatusChecker extends Thread {
                             if (!pusher.isAlive()) {
                                 System.out.println("ps " + key + " exited, pull up");
                                 try {
-                                    pusher.pullRtspPushRtmp()
-                                            .upTime(System.currentTimeMillis());
+                                    long now = System.currentTimeMillis();
+                                    pusher.pushRtmp()
+                                            .upTime(now);
+                                    Ds.sqlite0.update(
+                                            new Sql()
+                                                    .update(PusherEntity.class)
+                                                    .set("up_time = :up_time")
+                                                    .where("key = :key").sql(),
+                                            new Param()
+                                                    .add("up_time", now)
+                                                    .add("key", pusher.key()));
                                 } catch (ExecException e) {
                                     e.printStackTrace();
                                 }

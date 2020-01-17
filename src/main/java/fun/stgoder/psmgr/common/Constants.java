@@ -1,9 +1,9 @@
 package fun.stgoder.psmgr.common;
 
+import org.yaml.snakeyaml.Yaml;
+
 import java.io.File;
 import java.util.Map;
-
-import org.yaml.snakeyaml.Yaml;
 
 @SuppressWarnings(value = {"rawtypes", "unchecked"})
 public class Constants {
@@ -49,11 +49,7 @@ public class Constants {
         File hlsDir = new File(HLS_PATH);
         if (!hlsDir.exists())
             hlsDir.mkdirs();
-        if (OS.isLINUX() || OS.isMAC()) {
-            WITH_NGINX = (boolean) myConfig.getOrDefault("with-nginx", true);
-        } else {
-            WITH_NGINX = false;
-        }
+        WITH_NGINX = (boolean) myConfig.getOrDefault("with-nginx", true);
         NGINX_PATH = (String) myConfig.getOrDefault("nginx-path", "/home/stgoder/psmgr/nginx");
         if (WITH_NGINX) {
             File nginxDir = new File(NGINX_PATH);

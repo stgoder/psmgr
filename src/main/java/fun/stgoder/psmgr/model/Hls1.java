@@ -4,7 +4,7 @@ import fun.stgoder.psmgr.ps.live.Hls;
 
 public class Hls1 {
     private String key;
-    private String url;
+    private String source;
     private boolean keepAlive;
     private long cancelAfterSeconds;
     private long birthTime;
@@ -14,7 +14,7 @@ public class Hls1 {
     public static Hls1 fromHls(Hls hls) {
         Hls1 hls1 = new Hls1();
         hls1.setKey(hls.key());
-        hls1.setUrl(hls.url());
+        hls1.setSource(hls.source());
         hls1.setKeepAlive(hls.keepAlive());
         hls1.setCancelAfterSeconds(hls.cancelAfterSeconds());
         hls1.setBirthTime(hls.birthTime());
@@ -31,12 +31,12 @@ public class Hls1 {
         this.key = key;
     }
 
-    public String getUrl() {
-        return url;
+    public String getSource() {
+        return source;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setSource(String source) {
+        this.source = source;
     }
 
     public boolean isKeepAlive() {

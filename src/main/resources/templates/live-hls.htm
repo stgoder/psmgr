@@ -14,9 +14,12 @@
             </tr>
             <tr>
                 <td>
-                    <input type="text" name="url" required="required" placeholder="url">
+                    <input type="text" name="source" required="required" placeholder="source">
                 </td>
-                <td>rtsp://192.168.1.136/81</td>
+                <td>
+                    <div>rtsp://admin:a00000000@192.168.1.81:554/h264/ch1/main/av_stream</div>
+                    <div>/home/stgoder/5e016b8ec94c20126e69f67a.mp4</div>
+                </td>
             </tr>
             <tr>
                 <td>
@@ -47,17 +50,17 @@
     <table>
         <tr>
             <th>key</th>
-            <th>url</th>
+            <th>source</th>
             <th>keepAlive</th>
             <th>alive</th>
             <th>cancelAfterSeconds</th>
             <th>birthTime</th>
             <th>upTime</th>
-            <th>stopAndRemove</th>
+            <th>opt</th>
         </tr>
         <tr th:each="hls : ${hlss}">
             <td><a th:href="@{/hls/play-live/} + ${hls.key}" th:text="${hls.key}" target="_blank"></a></td>
-            <td th:text="${hls.url}"></td>
+            <td th:text="${hls.source}"></td>
             <td th:text="${hls.keepAlive}"></td>
             <td th:text="${hls.alive}"></td>
             <td th:text="${hls.cancelAfterSeconds}"></td>

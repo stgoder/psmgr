@@ -8,7 +8,7 @@
         <tr>
             <th>key</th>
             <th>time</th>
-            <th>delete</th>
+            <th>opt</th>
         </tr>
         <tr th:each="recordFile : ${recordFiles}">
             <td><a th:href="@{/hls/play-record/} + ${recordFile.key}" th:text="${recordFile.key}" target="_blank"></a>

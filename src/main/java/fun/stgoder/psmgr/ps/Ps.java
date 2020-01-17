@@ -1,14 +1,11 @@
 package fun.stgoder.psmgr.ps;
 
 import fun.stgoder.psmgr.common.exception.ExecException;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Ps {
@@ -96,45 +93,5 @@ public class Ps {
     private void destroy() {
         if (p0 != null)
             p0.destroy();
-    }
-
-    public static List<Integer> pids(String name) throws ExecException {
-        long s = System.currentTimeMillis();
-        List<Integer> pids = new ArrayList<>();
-        Out out = new Ps(
-                new Cmd()
-                        .add("/bin/bash")
-                        .add("-c")
-                        .add("pgrep -f " + name))
-                .exec();
-        int exitValue = out.getExitValue();
-        if (exitValue != 0 && StringUtils.isBlank(out.getOutput())) {
-            return pids;
-        }
-        String outputStr = StringUtils.trim(out.getOutput());
-        outputStr = StringUtils.strip(outputStr);
-        String[] pidStrs = outputStr.split("\n");
-        for (String pidStr : pidStrs) {
-            if (StringUtils.isNotBlank(pidStr)) {
-                try {
-                    int pid = Integer.valueOf(pidStr);
-                    pids.add(pid);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        long e = System.currentTimeMillis();
-        System.out.println("pids(" + name + "): " + (e - s));
-        return pids;
-    }
-
-    public static void main(String[] args) throws ExecException {
-        Out out = new Ps(
-                new Cmd()
-                        .add("/bin/bash")
-                        .add("-c")
-                        .add("ps -ef | grep java")).exec();
-        System.out.println(out);
     }
 }

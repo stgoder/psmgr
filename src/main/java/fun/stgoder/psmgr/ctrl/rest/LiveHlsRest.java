@@ -35,15 +35,15 @@ public class LiveHlsRest {
 
     @PostMapping("/startAndPut")
     public Resp startAndPut(@RequestParam("key") String key,
-                            @RequestParam("url") String url,
+                            @RequestParam("source") String source,
                             @RequestParam("keepAlive") boolean keepAlive,
                             @RequestParam(value = "cancelAfterSeconds", required = false, defaultValue = "0")
                                     long cancelAfterSeconds) throws BLException, ExecException {
         if (StringUtils.isBlank(key))
             throw new BLException(-1, "key blank");
-        if (StringUtils.isBlank(url))
-            throw new BLException(-1, "url blank");
-        Hls.startAndPut(key, url, keepAlive, cancelAfterSeconds);
+        if (StringUtils.isBlank(source))
+            throw new BLException(-1, "source blank");
+        Hls.startAndPut(key, source, keepAlive, cancelAfterSeconds);
         return new Resp(Code.REQUEST_OK);
     }
 

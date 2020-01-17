@@ -4,7 +4,7 @@ import fun.stgoder.psmgr.ps.pusher.Pusher;
 
 public class Pusher1 {
     private String key;
-    private String rtspUrl;
+    private String source;
     private String rtmpUrl;
     private boolean keepAlive;
     private long cancelAfterSeconds;
@@ -15,7 +15,7 @@ public class Pusher1 {
     public static Pusher1 fromPusher(Pusher pusher) {
         Pusher1 pusher1 = new Pusher1();
         pusher1.setKey(pusher.key());
-        pusher1.setRtspUrl(pusher.rtspUrl());
+        pusher1.setSource(pusher.source());
         pusher1.setRtmpUrl(pusher.rtmpUrl());
         pusher1.setKeepAlive(pusher.keepAlive());
         pusher1.setCancelAfterSeconds(pusher.cancelAfterSeconds());
@@ -33,12 +33,12 @@ public class Pusher1 {
         this.key = key;
     }
 
-    public String getRtspUrl() {
-        return rtspUrl;
+    public String getSource() {
+        return source;
     }
 
-    public void setRtspUrl(String rtspUrl) {
-        this.rtspUrl = rtspUrl;
+    public void setSource(String source) {
+        this.source = source;
     }
 
     public String getRtmpUrl() {

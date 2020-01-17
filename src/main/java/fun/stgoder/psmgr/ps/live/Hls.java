@@ -2,6 +2,10 @@ package fun.stgoder.psmgr.ps.live;
 
 import fun.stgoder.psmgr.common.Constants;
 import fun.stgoder.psmgr.common.OS;
+import fun.stgoder.psmgr.common.db.Ds;
+import fun.stgoder.psmgr.common.db.HlsEntity;
+import fun.stgoder.psmgr.common.db.Param;
+import fun.stgoder.psmgr.common.db.Sql;
 import fun.stgoder.psmgr.common.exception.ExecException;
 import fun.stgoder.psmgr.ps.Cmd;
 import fun.stgoder.psmgr.ps.Ps;
@@ -10,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Hls {
@@ -23,18 +28,31 @@ public class Hls {
     }
 
     public static synchronized void startAndPut(String key,
-                                                String url,
+                                                String source,
                                                 boolean keepAlive,
                                                 long cancelAfterSeconds) throws ExecException {
         if (hlss.containsKey(key))
             return;
-        Hls hls = new Hls(key, url)
+        long now = System.currentTimeMillis();
+        Hls hls = new Hls(key, source)
                 .keepAlive(keepAlive)
                 .cancelAfterSeconds(cancelAfterSeconds)
                 .startStreaming()
                 .birthTime(System.currentTimeMillis())
                 .upTime(System.currentTimeMillis());
         hlss.put(key, hls);
+        Ds.sqlite0.insert(
+                new Sql()
+                        .insert(HlsEntity.class)
+                        .cols(HlsEntity.BCOLS)
+                        .values(HlsEntity.VALUES).sql(),
+                new Param()
+                        .add("key", key)
+                        .add("source", source)
+                        .add("keep_alive", keepAlive)
+                        .add("cancel_after_seconds", cancelAfterSeconds)
+                        .add("birth_time", now)
+                        .add("up_time", now));
     }
 
     public static synchronized void stopAndRemove(String key) {
@@ -43,6 +61,44 @@ public class Hls {
             return;
         hls.cleanup();
         hlss.remove(key);
+        Ds.sqlite0.delete(
+                new Sql()
+                        .delete(HlsEntity.class)
+                        .where("key = :key").sql(),
+                new Param("key", key));
+    }
+
+    public static void loadFromDB() {
+        new Thread(() -> {
+            List<HlsEntity> hlsEntities = Ds.sqlite0.select(
+                    new Sql()
+                            .select(HlsEntity.COLS)
+                            .from(HlsEntity.class).sql(), HlsEntity.class);
+            for (HlsEntity hlsEntity : hlsEntities) {
+                long now = System.currentTimeMillis();
+                String key = hlsEntity.getKey();
+                Hls hls = new Hls(key, hlsEntity.getSource())
+                        .keepAlive(hlsEntity.isKeepAlive())
+                        .cancelAfterSeconds(hlsEntity.getCancelAfterSeconds())
+                        .birthTime(hlsEntity.getBirthTime())
+                        .upTime(now);
+                try {
+                    hls.startStreaming();
+                    hlss.put(key, hls);
+                    Ds.sqlite0.update(
+                            new Sql()
+                                    .update(HlsEntity.class)
+                                    .set("up_time = :up_time")
+                                    .where("key = :key").sql(),
+                            new Param()
+                                    .add("up_time", now)
+                                    .add("key", key));
+                } catch (ExecException e) {
+                    e.printStackTrace();
+                    System.err.println("load hls: " + key + " err");
+                }
+            }
+        }).start();
     }
 
     public static Collection<Hls> hlss() {
@@ -54,31 +110,44 @@ public class Hls {
     }
 
     private String key;
-    private String url;
+    private String source;
     private Ps ps;
     private boolean keepAlive;
     private long cancelAfterSeconds;
     private long birthTime;
     private long upTime;
 
-    public Hls(String key, String url) {
+    public Hls(String key, String source) {
         this.key = key;
-        this.url = url;
+        this.source = source;
         Cmd cmd = new Cmd();
         String hlsTsDirPath = Constants.HLS_PATH + File.separator + key;
         File hlsTsDir = new File(hlsTsDirPath);
         if (!hlsTsDir.exists())
             hlsTsDir.mkdirs();
+        boolean isFile = false;
+        try {
+            File file = new File(source);
+            if (file.isFile() && file.exists())
+                isFile = true;
+        } catch (Exception e) {
+            System.out.println("source not file");
+        }
         if (OS.isLINUX() || OS.isMAC()) {
             cmd.add(Constants.FFMPEG_PATH)
                     .add("-fflags")
-                    .add("genpts")
-                    .add("-rtsp_transport")
-                    .add("tcp")
-                    .add("-i")
-                    .add("-stimeout")
-                    .add("5000000") // keep alive
-                    .add(url)
+                    .add("genpts");
+            if (!isFile) {
+                if (source.startsWith("rtsp"))
+                    cmd.add("-rtsp_transport")
+                            .add("tcp");
+                cmd.add("-stimeout")
+                        .add("5000000"); // keep alive
+            } else {
+                cmd.add("-re");
+            }
+            cmd.add("-i")
+                    .add(source)
                     .add("-c:v")
                     .add("copy")
                     .add("-c:a")
@@ -96,11 +165,18 @@ public class Hls {
         if (OS.isWIN()) {
             cmd.add(Constants.FFMPEG_PATH)
                     .add("-fflags")
-                    .add("genpts")
-                    .add("-rtsp_transport")
-                    .add("tcp")
-                    .add("-i")
-                    .add(url)
+                    .add("genpts");
+            if (!isFile) {
+                if (source.startsWith("rtsp"))
+                    cmd.add("-rtsp_transport")
+                            .add("tcp");
+                cmd.add("-stimeout")
+                        .add("5000000"); // keep alive
+            } else {
+                cmd.add("-re");
+            }
+            cmd.add("-i")
+                    .add(source)
                     .add("-c:v")
                     .add("copy")
                     .add("-c:a")
@@ -135,8 +211,8 @@ public class Hls {
         return key;
     }
 
-    public String url() {
-        return url;
+    public String source() {
+        return source;
     }
 
     public Ps ps() {
@@ -202,8 +278,17 @@ class StatusChecker extends Thread {
                             if (!hls.isAlive()) {
                                 System.out.println("ps " + key + " exited, pull up");
                                 try {
+                                    long now = System.currentTimeMillis();
                                     hls.startStreaming()
-                                            .upTime(System.currentTimeMillis());
+                                            .upTime(now);
+                                    Ds.sqlite0.update(
+                                            new Sql()
+                                                    .update(HlsEntity.class)
+                                                    .set("up_time = :up_time")
+                                                    .where("key = :key").sql(),
+                                            new Param()
+                                                    .add("up_time", now)
+                                                    .add("key", key));
                                 } catch (ExecException e) {
                                     e.printStackTrace();
                                 }
