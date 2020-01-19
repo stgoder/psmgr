@@ -46,7 +46,7 @@ myConfig:
   record-path: /home/stgoder/psmgr/record
   hls-path: /home/stgoder/psmgr/hls
   hls-time: 10
-  local-ipv4: 192.168.1.214
+  local-ipv4: 127.0.0.1
   with-nginx: true
   nginx-path: /home/stgoder/psmgr/nginx
   ds:
