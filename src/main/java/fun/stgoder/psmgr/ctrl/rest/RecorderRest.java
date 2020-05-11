@@ -21,7 +21,7 @@ public class RecorderRest {
         for (Recorder recorder : Recorder.recorders()) {
             recorders.add(Recorder1.fromRecorder(recorder));
         }
-        return new Resp(Code.REQUEST_OK, recorders);
+        return Resp.ok(recorders);
     }
 
     @GetMapping("/{key}")
@@ -29,7 +29,7 @@ public class RecorderRest {
         Recorder recorder = Recorder.get(key);
         if (recorder == null)
             throw new BLException(Code.REQUEST_ERR, "recorder not exist");
-        return new Resp(Code.REQUEST_OK, Recorder1.fromRecorder(recorder));
+        return Resp.ok(Recorder1.fromRecorder(recorder));
     }
 
     @PostMapping("/startAndPut")
@@ -43,12 +43,12 @@ public class RecorderRest {
         if (StringUtils.isBlank(url))
             throw new BLException(-1, "url blank");
         Recorder.startAndPut(key, url, keepAlive, cancelAfterSeconds);
-        return new Resp(Code.REQUEST_OK);
+        return Resp.ok();
     }
 
     @DeleteMapping("/stopAndRemove/{key}")
     public Resp stopAndRemove(@PathVariable("key") String key) {
         Recorder.stopAndRemove(key);
-        return new Resp(Code.REQUEST_OK);
+        return Resp.ok();
     }
 }

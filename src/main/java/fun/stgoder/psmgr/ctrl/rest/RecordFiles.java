@@ -1,6 +1,5 @@
 package fun.stgoder.psmgr.ctrl.rest;
 
-import fun.stgoder.psmgr.common.Code;
 import fun.stgoder.psmgr.common.Constants;
 import fun.stgoder.psmgr.common.model.Resp;
 import fun.stgoder.psmgr.model.RecordFile;
@@ -25,7 +24,7 @@ public class RecordFiles {
                 recordFiles.add(new RecordFile(file.getName(), file.lastModified()));
             }
         }
-        return new Resp(Code.REQUEST_OK, recordFiles);
+        return Resp.ok(recordFiles);
     }
 
     @DeleteMapping("/{key}")
@@ -33,6 +32,6 @@ public class RecordFiles {
         File recordFileDir = new File(Constants.RECORD_PATH + File.separator + key);
         if (recordFileDir.exists())
             FileUtils.deleteDirectory(recordFileDir);
-        return new Resp(Code.REQUEST_OK);
+        return Resp.ok();
     }
 }

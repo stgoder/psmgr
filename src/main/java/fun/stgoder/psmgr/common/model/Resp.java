@@ -1,50 +1,39 @@
 package fun.stgoder.psmgr.common.model;
 
 import fun.stgoder.psmgr.common.Code;
+import fun.stgoder.psmgr.common.util.JsonUtil;
 
 import java.io.Serializable;
 
-public class Resp implements Serializable {
+public class Resp<T> implements Serializable {
     private static final long serialVersionUID = 5854452812497639129L;
     private int code;
-    private String message;
-    private Object data;
+    private String msg;
+    private T data;
+
+    public static Resp ok() {
+        return new Resp(Code.REQUEST_OK, "ok", null);
+    }
+
+    public static Resp ok(Object data) {
+        return new Resp(Code.REQUEST_OK, "ok", data);
+    }
+
+    public static Resp err(String msg) {
+        return new Resp(Code.REQUEST_ERR, msg, null);
+    }
+
+    public static Resp err(String msg, Object data) {
+        return new Resp(Code.REQUEST_ERR, msg, data);
+    }
 
     public Resp() {
     }
 
-    public Resp(String message) {
-        this.message = message;
-    }
-
-    public Resp(int code) {
+    public Resp(int code, String msg, T data) {
         this.code = code;
-        if (code == Code.REQUEST_OK) {
-            this.message = "succ";
-        } else {
-            this.message = "err";
-        }
-    }
-
-    public Resp(int code, String message) {
-        this.code = code;
-        this.message = message;
-    }
-
-    public Resp(int code, String message, Object data) {
-        this.code = code;
-        this.message = message;
+        this.msg = msg;
         this.data = data;
-    }
-
-    public Resp(int code, Object data) {
-        this.code = code;
-        this.data = data;
-        if (code == Code.REQUEST_OK) {
-            this.message = "succ";
-        } else {
-            this.message = "err";
-        }
     }
 
     public int getCode() {
@@ -55,19 +44,24 @@ public class Resp implements Serializable {
         this.code = code;
     }
 
-    public String getMessage() {
-        return message;
+    public String getMsg() {
+        return msg;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
     public Object getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(T data) {
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return JsonUtil.toJson(this);
     }
 }

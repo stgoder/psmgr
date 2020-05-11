@@ -1,11 +1,10 @@
 package fun.stgoder.psmgr.ctrl.rest;
 
-import fun.stgoder.psmgr.common.Code;
 import fun.stgoder.psmgr.common.exception.BLException;
 import fun.stgoder.psmgr.common.exception.ExecException;
 import fun.stgoder.psmgr.common.model.Resp;
-import fun.stgoder.psmgr.ps.pusher.Pusher;
 import fun.stgoder.psmgr.model.Pusher1;
+import fun.stgoder.psmgr.ps.pusher.Pusher;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +20,7 @@ public class PusherRest {
         for (Pusher pusher : Pusher.pushers()) {
             pushers.add(Pusher1.fromPusher(pusher));
         }
-        return new Resp(Code.REQUEST_OK, pushers);
+        return Resp.ok(pushers);
     }
 
     @GetMapping("/{key}")
@@ -29,7 +28,7 @@ public class PusherRest {
         Pusher pusher = Pusher.get(key);
         if (pusher == null)
             throw new BLException(-1, "pusher not exist");
-        return new Resp(Code.REQUEST_OK, Pusher1.fromPusher(pusher));
+        return Resp.ok(Pusher1.fromPusher(pusher));
     }
 
     @PostMapping("/startAndPut")
@@ -46,12 +45,12 @@ public class PusherRest {
         if (StringUtils.isBlank(rtmpUrl))
             throw new BLException(-1, "rtmpUrl blank");
         Pusher.startAndPut(key, source, rtmpUrl, keepAlive, cancelAfterSeconds);
-        return new Resp(Code.REQUEST_OK);
+        return Resp.ok();
     }
 
     @DeleteMapping("/stopAndRemove/{key}")
     public Resp stopAndRemove(@PathVariable("key") String key) {
         Pusher.stopAndRemove(key);
-        return new Resp(Code.REQUEST_OK);
+        return Resp.ok();
     }
 }

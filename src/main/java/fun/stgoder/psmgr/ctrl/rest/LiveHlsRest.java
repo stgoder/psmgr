@@ -22,7 +22,7 @@ public class LiveHlsRest {
         for (Hls hls : Hls.hlss()) {
             hlss.add(Hls1.fromHls(hls));
         }
-        return new Resp(Code.REQUEST_OK, hlss);
+        return Resp.ok(hlss);
     }
 
     @GetMapping("/{key}")
@@ -30,7 +30,7 @@ public class LiveHlsRest {
         Hls hls = Hls.get(key);
         if (hls == null)
             throw new BLException(Code.REQUEST_ERR, "live hls not exist");
-        return new Resp(Code.REQUEST_OK, Hls1.fromHls(hls));
+        return Resp.ok(Hls1.fromHls(hls));
     }
 
     @PostMapping("/startAndPut")
@@ -44,12 +44,12 @@ public class LiveHlsRest {
         if (StringUtils.isBlank(source))
             throw new BLException(-1, "source blank");
         Hls.startAndPut(key, source, keepAlive, cancelAfterSeconds);
-        return new Resp(Code.REQUEST_OK);
+        return Resp.ok();
     }
 
     @DeleteMapping("/stopAndRemove/{key}")
     public Resp stopAndRemove(@PathVariable("key") String key) {
         Hls.stopAndRemove(key);
-        return new Resp(Code.REQUEST_OK);
+        return Resp.ok();
     }
 }
