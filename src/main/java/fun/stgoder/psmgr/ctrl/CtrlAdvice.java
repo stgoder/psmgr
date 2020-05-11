@@ -35,7 +35,7 @@ public class CtrlAdvice {
                 message = baseException.message();
             }
             return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON)
-                    .body(Resp.ok(message));
+                    .body(Resp.err(message));
         } else if (uri.contains("/fs")) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentLength(0);
         } else if (uri.contains("/hook/nginx")) {
@@ -47,7 +47,7 @@ public class CtrlAdvice {
                 message = baseException.message();
             }
             return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON)
-                    .body(Resp.ok(message));
+                    .body(Resp.err(message));
         } else {
             int code = Code.REQUEST_ERR;
             String message = e.getMessage();
