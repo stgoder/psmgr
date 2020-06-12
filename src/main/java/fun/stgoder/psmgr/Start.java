@@ -17,6 +17,8 @@ import java.io.IOException;
 public class Start {
 
     public static void main(String[] args) throws BaseException, IOException {
+        SpringApplication.run(Start.class, args);
+
         if (Constants.WITH_NGINX) {
             Nginx.init();
             if (!Nginx.alive())
@@ -25,7 +27,5 @@ public class Start {
         Ds.initSqlite0();
         Pusher.loadFromDB();
         Hls.loadFromDB();
-
-        SpringApplication.run(Start.class, args);
     }
 }
