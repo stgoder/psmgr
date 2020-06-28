@@ -41,7 +41,7 @@ logging:
 
 myConfig:
   test-mode: true
-  ffmpeg-path: /home/stgoder/sof/ffmpeg4.1.3/ffmpeg
+  ffmpeg-path: /home/stgoder/psmgr/ffmpeg
   pslog-path: /home/stgoder/psmgr/pslog
   record-path: /home/stgoder/psmgr/record
   hls-path: /home/stgoder/psmgr/hls
